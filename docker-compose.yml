@@ -30,6 +30,12 @@ services:
       - DEBUG=0
       - DATABASE_URL=postgresql://travel_user:travel_password@db:5432/travel_db
       - SECRET_KEY=django-insecure-change-this-in-production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   nginx:
     image: nginx:alpine
@@ -39,7 +45,8 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - static_volume:/app/staticfiles
     depends_on:
-      - web
+      web:
+        condition: service_healthy
 
 volumes:
   postgres_data:
