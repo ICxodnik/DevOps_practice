@@ -1,0 +1,267 @@
+{% extends 'travel_tracker/base.html' %}
+
+{% block title %}Список країн - Туристичний трекер{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-container {
+        margin-bottom: 2rem;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+    
+    .countries-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .country-item {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .country-item:hover {
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .country-item.visited {
+        background: #d4edda;
+        border-color: #28a745;
+    }
+    
+    .country-checkbox {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #667eea;
+    }
+    
+    .country-name {
+        flex: 1;
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .country-code {
+        font-size: 0.85rem;
+        color: #6c757d;
+        background: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+    
+    .stats-bar {
+        background: #e9ecef;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .stats-info {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+    }
+    
+    .stats-item {
+        text-align: center;
+    }
+    
+    .stats-item strong {
+        display: block;
+        font-size: 1.5rem;
+        color: #667eea;
+    }
+    
+    .stats-item span {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+    }
+    
+    .loading {
+        text-align: center;
+        padding: 1rem;
+        color: #667eea;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Список країн</h2>
+    
+    <div class="stats-bar">
+        <div class="stats-info">
+            <div class="stats-item">
+                <strong id="found-count">{{ countries|length|default:0 }}</strong>
+                <span>Знайдено</span>
+            </div>
+            <div class="stats-item">
+                <strong id="total-visited">{{ total_visited }}</strong>
+                <span>Відвідано з {{ total_countries }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="search-container">
+        <input 
+            type="text" 
+            class="search-input" 
+            id="search-input" 
+            placeholder="Пошук країни за назвою..." 
+            value="{{ search_query }}"
+            autocomplete="off"
+        >
+    </div>
+    
+    <div id="countries-container">
+        {% if countries %}
+            <div class="countries-grid" id="countries-grid">
+                {% for country in countries %}
+                <div class="country-item {% if country.visited %}visited{% endif %}" data-country-id="{{ country.id }}">
+                    <input 
+                        type="checkbox" 
+                        class="country-checkbox" 
+                        id="country-{{ country.id }}"
+                        {% if country.visited %}checked{% endif %}
+                        onchange="toggleCountry({{ country.id }}, this.checked)"
+                    >
+                    <label for="country-{{ country.id }}" class="country-name">
+                        {{ country.name }}
+                    </label>
+                    <span class="country-code">{{ country.code }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-results">
+                <p>Країни не знайдено. Спробуйте інший пошуковий запит.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let searchTimeout;
+    const searchInput = document.getElementById('search-input');
+    
+    // Пошук з затримкою
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim();
+        
+        searchTimeout = setTimeout(() => {
+            if (query.length > 0 || query.length === 0) {
+                window.location.href = `{% url 'countries_list' %}?search=${encodeURIComponent(query)}`;
+            }
+        }, 300);
+    });
+    
+    // Підрахунок відвіданих країн
+    function updateStats() {
+        const checkboxes = document.querySelectorAll('.country-checkbox:checked');
+        const totalVisited = checkboxes.length;
+        // Оновлюємо тільки якщо є відповідний елемент
+        const totalVisitedEl = document.getElementById('total-visited');
+        if (totalVisitedEl) {
+            totalVisitedEl.textContent = totalVisited;
+        }
+    }
+    
+    // Ініціалізація статистики
+    updateStats();
+    
+    // Функція для перемикання статусу країни
+    function toggleCountry(countryId, checked) {
+        fetch(`/toggle-country/${countryId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Оновлюємо вигляд елемента
+            const countryItem = document.querySelector(`[data-country-id="${countryId}"]`);
+            if (data.visited) {
+                countryItem.classList.add('visited');
+            } else {
+                countryItem.classList.remove('visited');
+            }
+            
+            // Оновлюємо статистику
+            const totalVisitedEl = document.getElementById('total-visited');
+            if (totalVisitedEl) {
+                totalVisitedEl.textContent = data.visited_count + ' з ' + data.total_countries;
+            }
+            
+            // Оновлюємо локальну статистику
+            updateStats();
+        })
+        .catch(error => {
+            console.error('Помилка:', error);
+            alert('Помилка при оновленні статусу країни');
+        });
+    }
+    
+    // Функція для отримання CSRF токена
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Підрахунок відвіданих при завантаженні
+    document.addEventListener('DOMContentLoaded', function() {
+        const visitedCheckboxes = document.querySelectorAll('.country-checkbox:checked');
+        document.getElementById('total-visited').textContent = visitedCheckboxes.length;
+    });
+</script>
+{% endblock %}
+

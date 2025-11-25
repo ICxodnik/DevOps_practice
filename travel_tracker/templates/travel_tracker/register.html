@@ -1,0 +1,98 @@
+{% extends 'travel_tracker/base.html' %}
+
+{% block title %}Реєстрація - Туристичний трекер{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-header {
+        margin-bottom: 100px;
+    }
+    .password-wrapper {
+        position: relative;
+    }
+    .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: #667eea;
+        padding: 5px;
+    }
+    .password-toggle:hover {
+        color: #5568d3;
+    }
+    .form-group input[type="password"],
+    .form-group input[type="email"] {
+        padding-right: 40px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 class="register-header">Реєстрація нового користувача</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_email">Email:</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div style="color: red; font-size: 0.9rem; margin-top: 0.5rem;">
+                    {{ form.email.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="id_password1">Пароль:</label>
+            <div class="password-wrapper">
+                {{ form.password1 }}
+                <button type="button" class="password-toggle" onclick="togglePassword('id_password1', this)">
+                    👁️
+                </button>
+            </div>
+            {% if form.password1.errors %}
+                <div style="color: red; font-size: 0.9rem; margin-top: 0.5rem;">
+                    {{ form.password1.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="id_password2">Підтвердження пароля:</label>
+            <div class="password-wrapper">
+                {{ form.password2 }}
+                <button type="button" class="password-toggle" onclick="togglePassword('id_password2', this)">
+                    👁️
+                </button>
+            </div>
+            {% if form.password2.errors %}
+                <div style="color: red; font-size: 0.9rem; margin-top: 0.5rem;">
+                    {{ form.password2.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn">Зареєструватися</button>
+    </form>
+    <p style="margin-top: 1rem;">
+        Вже маєте акаунт? <a href="{% url 'login' %}">Увійдіть</a>
+    </p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            button.textContent = '🙈';
+        } else {
+            input.type = 'password';
+            button.textContent = '👁️';
+        }
+    }
+</script>
+{% endblock %}
