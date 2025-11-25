@@ -1,115 +1,95 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ------------------------------------------------------------
+# встановлення Docker, Docker Compose, Python (≥3.9)
+# та Django на Debian/Ubuntu‑подібних системах.
+# Запускати з правами sudo:  sudo ./install_dev_tools.sh
+# ------------------------------------------------------------
+set -euo pipefail
 
-# Скрипт для автоматичного встановлення інструментів DevOps
-# Docker, Docker Compose, Python 3.9+, Django
+GREEN="\033[1;32m"
+BLUE="\033[1;34m"
+RESET="\033[0m"
 
-set -e
+info()    { echo -e "${BLUE}[INFO]${RESET}  $*"; }
+success() { echo -e "${GREEN}[OK]${RESET}    $*"; }
+command_exists() { command -v "$1" &>/dev/null; }
 
-# Перевірка прав доступу
-if [ "$EUID" -ne 0 ]; then 
-    echo "Будь ласка, запустіть скрипт з sudo: sudo ./install_dev_tools.sh"
+require_root() {
+  if [[ $EUID -ne 0 ]]; then
+    echo "Будь ласка, запустіть скрипт через sudo:  sudo $0"
     exit 1
-fi
+  fi
+}
 
-echo "Початок встановлення DevOps інструментів..."
-echo ""
-
-# Оновлення пакетів
-echo "[1/4] Оновлення списку пакетів..."
-apt-get update -qq
-
-# Встановлення базових залежностей
-echo "[2/4] Встановлення базових залежностей..."
-apt-get install -y -qq \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release \
-    software-properties-common \
-    python3 \
-    python3-pip \
-    > /dev/null 2>&1
-
-# Встановлення Docker
-echo "[3/4] Перевірка та встановлення Docker..."
-if command -v docker &> /dev/null; then
-    echo "  Docker вже встановлено: $(docker --version)"
-else
-    # Додавання Docker репозиторію
+install_docker() {
+  if command_exists docker; then
+    success "Docker вже встановлений: $(docker --version)"
+  else
+    info "Встановлюю Docker…"
+    apt-get update
+    apt-get install -y ca-certificates curl gnupg lsb-release software-properties-common
     install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    chmod a+r /etc/apt/keyrings/docker.gpg
-    
     echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-      tee /etc/apt/sources.list.d/docker.list > /dev/null
-    
-    apt-get update -qq
-    apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null 2>&1
-    
-    systemctl enable docker > /dev/null 2>&1
-    systemctl start docker > /dev/null 2>&1
-    
-    if [ "$SUDO_USER" ]; then
-        usermod -aG docker "$SUDO_USER"
-    fi
-    
-    echo "  Docker встановлено: $(docker --version)"
-fi
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+      https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+      tee /etc/apt/sources.list.d/docker.list >/dev/null
+    apt-get update
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    systemctl enable --now docker
+    success "Docker встановлено."
+  fi
+}
 
-# Встановлення Docker Compose
-if command -v docker-compose &> /dev/null || docker compose version &> /dev/null; then
-    echo "  Docker Compose вже встановлено"
-else
-    echo "  Docker Compose встановлюється разом з Docker"
-fi
+install_docker_compose() {
+  if docker compose version &>/dev/null; then
+    success "Docker Compose вже доступний: $(docker compose version --short)"
+  else
+    info "Docker Compose встановлюється разом із Docker як плагін."
+  fi
+}
 
-# Встановлення Python
-echo "[4/4] Перевірка та встановлення Python..."
-if command -v python3 &> /dev/null; then
-    PYTHON_MINOR=$(python3 -c 'import sys; print(sys.version_info.minor)')
-    if [ "$PYTHON_MINOR" -ge 9 ]; then
-        echo "  Python вже встановлено: $(python3 --version)"
+version_ge() { printf '%s\n%s' "$2" "$1" | sort -C -V; }
+
+install_python() {
+  REQUIRED="3.9"
+  if command_exists python3; then
+    CURRENT=$(python3 -c 'import sys;print(".".join(map(str, sys.version_info[:3])))')
+    if version_ge "$CURRENT" "$REQUIRED"; then
+      success "Python $CURRENT вже >= $REQUIRED — ок."
+      return
     else
-        apt-get install -y -qq python3 python3-pip > /dev/null 2>&1
-        echo "  Python встановлено: $(python3 --version)"
+      info "Python $CURRENT < $REQUIRED — оновлюю."
     fi
-else
-    apt-get install -y -qq python3 python3-pip > /dev/null 2>&1
-    echo "  Python встановлено: $(python3 --version)"
-fi
+  else
+    info "Python не знайдено — встановлюю."
+  fi
 
-# Оновлення pip
-python3 -m pip install --upgrade pip > /dev/null 2>&1
+  add-apt-repository -y ppa:deadsnakes/ppa
+  apt-get update
+  apt-get install -y python3.10 python3.10-venv python3.10-distutils python3-pip
+  ln -sf /usr/bin/python3.10 /usr/local/bin/python3
+  success "Python $(python3 --version) встановлено."
+}
 
-# Встановлення Django
-echo "Перевірка та встановлення Django..."
-if python3 -c "import django" &> /dev/null 2>&1; then
-    DJANGO_VERSION=$(python3 -c "import django; print(django.get_version())" 2>/dev/null)
-    echo "  Django вже встановлено: версія $DJANGO_VERSION"
-else
-    pip3 install django > /dev/null 2>&1
-    DJANGO_VERSION=$(python3 -c "import django; print(django.get_version())" 2>/dev/null)
-    echo "  Django встановлено: версія $DJANGO_VERSION"
-fi
+install_django() {
+  if python3 -m django --version &>/dev/null; then
+    success "Django вже встановлений: $(python3 -m django --version)"
+  else
+    info "Встановлюю Django…"
+    pip3 install --user --upgrade pip
+    pip3 install --user Django
+    success "Django $(python3 -m django --version) встановлено."
+  fi
+}
 
-echo ""
-echo "=========================================="
-echo "Встановлення завершено!"
-echo "=========================================="
-echo ""
-echo "Встановлені інструменти:"
-echo "  ✓ Docker: $(docker --version)"
-if command -v docker-compose &> /dev/null; then
-    echo "  ✓ Docker Compose: $(docker-compose --version)"
-elif docker compose version &> /dev/null; then
-    echo "  ✓ Docker Compose: $(docker compose version)"
-fi
-echo "  ✓ Python: $(python3 --version)"
-echo "  ✓ pip: $(pip3 --version | cut -d' ' -f1-2)"
-echo "  ✓ Django: $(python3 -c "import django; print(django.get_version())" 2>/dev/null)"
-echo ""
-echo "Примітка: Якщо ви запускали скрипт з sudo, вам може знадобитися"
-echo "вийти та увійти знову, щоб використовувати Docker без sudo."
+main() {
+  require_root
+  install_docker
+  install_docker_compose
+  install_python
+  install_django
+  success "Усі інструменти готові!"
+}
+
+main "$@"
