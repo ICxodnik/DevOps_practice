@@ -88,6 +88,7 @@
 {% endblock %}
 
 {% block content %}
+{% csrf_token %}
 <div class="card">
     <h2>Ваші туристичні досягнення</h2>
     
@@ -181,14 +182,29 @@
     
     // Функція для перемикання статусу країни
     function toggleCountry(countryId) {
+        const csrftoken = getCookie('csrftoken');
+        if (!csrftoken) {
+            console.error('CSRF token not found');
+            alert('Помилка: CSRF токен не знайдено. Будь ласка, оновіть сторінку.');
+            return;
+        }
+        
         fetch(`/toggle-country/${countryId}/`, {
             method: 'POST',
             headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
+                'X-CSRFToken': csrftoken,
                 'Content-Type': 'application/json',
             },
+            credentials: 'same-origin',
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`HTTP ${response.status}: ${text}`);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             const marker = markers[countryId];
             const country = countriesData.find(c => c.id === countryId);

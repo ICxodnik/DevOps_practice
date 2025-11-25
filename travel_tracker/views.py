@@ -161,7 +161,10 @@ def countries_list_view(request):
 @require_POST
 def toggle_country_view(request, country_id):
     """Додати/видалити країну зі списку відвіданих"""
-    country = get_object_or_404(Country, id=country_id)
+    try:
+        country = get_object_or_404(Country, id=country_id)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
     
     if request.user.is_authenticated:
         # Для авторизованих користувачів - зберігаємо в базу даних
