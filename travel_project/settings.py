@@ -21,7 +21,11 @@ DEBUG = os.environ.get('DEBUG', '0') == '1'
 ALLOWED_HOSTS = ['*']
 
 # CSRF settings для роботи з Nginx
-CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1']
+# CSRF_TRUSTED_ORIGINS встановлюється через змінну середовища або залишається порожнім для роботи з будь-яким доменом
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if os.environ.get('CSRF_TRUSTED_ORIGINS') else []
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_SECURE = False
 
 
 # Application definition

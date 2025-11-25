@@ -5,6 +5,7 @@ WORKDIR /app
 # Встановлюємо системні залежності
 RUN apt-get update && apt-get install -y \
     postgresql-client \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Копіюємо requirements.txt та встановлюємо залежності
