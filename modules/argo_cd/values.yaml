@@ -7,18 +7,18 @@ server:
     limits:
       cpu: 1000m
       memory: 2Gi
-  
+
   # Налаштування для роботи з Git
   extraArgs:
     - --insecure
     - --rootpath
     - /
-  
+
   # Налаштування для роботи з Helm
   config:
     repositories: |
       - name: my-repo
-        url: https://github.com/your-username/my-microservice-project.git
+        url: https://github.com/icxodnik/DevOps_practice.git
         type: git
 
 repoServer:
@@ -55,7 +55,7 @@ global:
   image:
     repository: quay.io/argoproj/argocd
     tag: v2.8.4
-  
+
   # Налаштування для роботи з ECR
   imagePullSecrets:
     - name: aws-ecr-secret
@@ -63,4 +63,4 @@ global:
 # Налаштування для роботи з Helm
 helm:
   enabled: true
-  version: v3.12.0 
+  version: v3.12.0

@@ -60,8 +60,8 @@ DevOps_practice/
 
 ```bash
 # Клонування репозиторію
-git clone https://github.com/your-username/my-microservice-project.git
-cd my-microservice-project
+git clone https://github.com/icxodnik/DevOps_practice.git
+cd DevOps_practice
 
 # Налаштування AWS credentials
 export AWS_ACCESS_KEY_ID="your-access-key"

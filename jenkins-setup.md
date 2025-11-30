@@ -31,7 +31,7 @@
 6. Введіть Repository URL:
 
    ```
-   https://github.com/your-username/my-microservice-project.git
+   https://github.com/icxodnik/DevOps_practice.git
    ```
 
 7. Виберіть гілку (зазвичай `main` або `master`)

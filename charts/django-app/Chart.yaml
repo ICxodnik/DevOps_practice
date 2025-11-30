@@ -8,9 +8,9 @@ keywords:
   - django
   - python
   - web
-home: https://github.com/your-username/my-microservice-project
+home: https://github.com/icxodnik/DevOps_practice
 sources:
-  - https://github.com/your-username/my-microservice-project
+  - https://github.com/icxodnik/DevOps_practice
 maintainers:
-  - name: Your Name
-    email: your.email@example.com 
+  - name: Nataliia Khodorova
+    email: icxodnik@gmail.com

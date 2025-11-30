@@ -84,7 +84,7 @@ module "jenkins" {
   aws_region         = "us-west-2"
 
   # Git repository для оновлення Helm chart
-  git_repo_url       = "https://github.com/your-username/my-microservice-project.git"
+  git_repo_url       = "https://github.com/icxodnik/DevOps_practice.git"
   git_credentials_id = "github-credentials"
 }
 
@@ -137,7 +137,7 @@ module "argo_cd" {
   # Налаштування для Argo CD Application
   app_name                 = "django-app"
   app_namespace            = "django-app"
-  git_repo_url             = "https://github.com/your-username/my-microservice-project.git"
+  git_repo_url             = "https://github.com/icxodnik/DevOps_practice.git"
   git_repo_path            = "charts/django-app"
   git_repo_target_revision = "main"
 

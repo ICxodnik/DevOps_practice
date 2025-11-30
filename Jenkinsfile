@@ -40,7 +40,7 @@ pipeline {
     environment {
         ECR_REPOSITORY = 'your-ecr-repository-url'
         AWS_REGION = 'us-west-2'
-        GIT_REPO = 'https://github.com/your-username/my-microservice-project.git'
+        GIT_REPO = 'https://github.com/icxodnik/DevOps_practice.git'
         HELM_CHART_PATH = 'charts/django-app'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
