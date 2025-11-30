@@ -97,7 +97,7 @@ cd django-app
 
 ## ⚠️ Важливі зауваження
 
-1. **AWS Account ID**: Замініть `123456789012` в `charts/django-app/values.yaml` на ваш AWS Account ID
+1. **AWS Account ID**: Налаштовано в `charts/django-app/values.yaml`
 2. **Регіон**: За замовчуванням використовується `us-west-2`
 3. **Вартість**: EKS кластер та LoadBalancer є платними ресурсами
 4. **Безпека**: Змініть `SECRET_KEY` в values.yaml для production

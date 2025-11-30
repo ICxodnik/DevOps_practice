@@ -18,9 +18,12 @@ echo "📍 Release Name: ${RELEASE_NAME}"
 echo "📍 Namespace: ${NAMESPACE}"
 echo "📍 AWS Account ID: ${AWS_ACCOUNT_ID}"
 
-# Оновлюємо values.yaml з правильним AWS Account ID
-echo "📝 Оновлення values.yaml..."
-sed -i.bak "s/123456789012/${AWS_ACCOUNT_ID}/g" "${CHART_PATH}/values.yaml"
+# Оновлюємо values.yaml з правильним AWS Account ID (якщо потрібно)
+echo "📝 Перевірка values.yaml..."
+if grep -q "123456789012" "${CHART_PATH}/values.yaml" 2>/dev/null; then
+  sed -i.bak "s/123456789012/${AWS_ACCOUNT_ID}/g" "${CHART_PATH}/values.yaml"
+  rm -f "${CHART_PATH}/values.yaml.bak"
+fi
 
 # Перевіряємо підключення до кластера
 echo "🔍 Перевірка підключення до кластера..."

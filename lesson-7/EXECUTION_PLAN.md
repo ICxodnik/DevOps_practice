@@ -171,7 +171,7 @@ terraform destroy
 
 ## ⚠️ Важливі зауваження
 
-1. **AWS Account ID**: Замініть `123456789012` в `charts/django-app/values.yaml`
+1. **AWS Account ID**: Налаштовано в `charts/django-app/values.yaml`
 2. **Вартість**: EKS кластер та LoadBalancer є платними ресурсами
 3. **Безпека**: Змініть SECRET_KEY для production
 4. **Регіон**: За замовчуванням використовується us-west-2
