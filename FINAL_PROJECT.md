@@ -14,12 +14,11 @@
 ## Структура проєкту
 
 ```
-lesson-8/
+DevOps_practice/
 ├── main.tf                  # Головний файл для підключення модулів
 ├── backend.tf               # Налаштування бекенду для стейтів (S3 + DynamoDB)
 ├── outputs.tf               # Загальні виводи ресурсів
 ├── Jenkinsfile              # CI/CD pipeline
-├── docker-compose.yaml      # Docker Compose для локального тестування
 │
 ├── modules/                 # Каталог з усіма модулями
 │   ├── s3-backend/          # Модуль для S3 та DynamoDB
@@ -33,12 +32,26 @@ lesson-8/
 │
 ├── charts/                  # Helm charts
 │   └── django-app/          # Django додаток
+│       ├── Chart.yaml
+│       ├── values.yaml
+│       └── templates/
+│           ├── deployment.yaml
+│           ├── service.yaml
+│           ├── configmap.yaml
+│           ├── hpa.yaml
+│           └── _helpers.tpl
 │
-└── django-app/              # Django додаток
-    ├── Dockerfile
-    ├── docker-compose.yaml
-    ├── Jenkinsfile
-    └── app/
+├── django-app/              # Django додаток
+│   ├── Dockerfile
+│   ├── docker-compose.yaml
+│   ├── Jenkinsfile
+│   └── travel_project/      # Django проєкт
+│
+└── examples/                # Приклади використання модулів
+    ├── aurora-example.tf
+    ├── aurora-mysql-example.tf
+    ├── mysql-example.tf
+    └── postgres-example.tf
 ```
 
 ## Покрокова інструкція розгортання
@@ -48,7 +61,7 @@ lesson-8/
 ```bash
 # Клонування репозиторію
 git clone https://github.com/your-username/my-microservice-project.git
-cd my-microservice-project/lesson-8
+cd my-microservice-project
 
 # Налаштування AWS credentials
 export AWS_ACCESS_KEY_ID="your-access-key"
@@ -87,7 +100,7 @@ terraform apply
 
 ```bash
 # Отримання конфігурації кластера
-aws eks update-kubeconfig --name lesson-8-eks-cluster --region us-west-2
+aws eks update-kubeconfig --name fn-project-eks-cluster --region us-west-2
 
 # Перевірка підключення
 kubectl get nodes
@@ -159,7 +172,7 @@ kubectl port-forward svc/prometheus-operated 9090:9090 -n monitoring
 
    - Відкрийте Jenkins UI
    - Створіть новий Pipeline job
-   - Вкажіть шлях до Jenkinsfile: `lesson-8/Jenkinsfile`
+   - Вкажіть шлях до Jenkinsfile: `Jenkinsfile`
    - Налаштуйте Git credentials
 
 2. **Запуск Pipeline**:

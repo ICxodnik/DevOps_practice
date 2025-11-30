@@ -5,6 +5,7 @@
 ## Функціонал
 
 ### Основні можливості:
+
 - **Aurora Cluster** (`use_aurora = true`) - створює Aurora Cluster з writer та reader instances
 - **RDS Instance** (`use_aurora = false`) - створює звичайну RDS instance
 - **Автоматичне створення**:
@@ -13,6 +14,7 @@
   - Parameter Group з базовими параметрами
 
 ### Підтримувані двигуни:
+
 - **PostgreSQL**: `postgres`, `aurora-postgresql`
 - **MySQL**: `mysql`, `aurora-mysql`
 
@@ -38,24 +40,24 @@ module "aurora_postgres" {
 
   use_aurora = true
   identifier = "my-aurora-postgres"
-  
+
   engine         = "aurora-postgresql"
   engine_version = "14.9"
   instance_class = "db.r6g.large"
-  
+
   database_name   = "myapp"
   master_username = "admin"
   master_password = "secure-password"
-  
+
   aurora_cluster_size = 3  # 1 writer + 2 readers
   aurora_instance_class = "db.r6g.large"
-  
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnet_ids
-  
+
   storage_encrypted = true
   backup_retention_period = 30
-  
+
   tags = {
     Environment = "Production"
     Project     = "MyApp"
@@ -71,24 +73,24 @@ module "aurora_mysql" {
 
   use_aurora = true
   identifier = "my-aurora-mysql"
-  
+
   engine         = "aurora-mysql"
   engine_version = "8.0.mysql_aurora.3.05.1"
   instance_class = "db.r6g.large"
-  
+
   database_name   = "myapp"
   master_username = "admin"
   master_password = "secure-password"
-  
+
   aurora_cluster_size = 2  # 1 writer + 1 reader
   aurora_instance_class = "db.r6g.large"
-  
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnet_ids
-  
+
   storage_encrypted = true
   backup_retention_period = 30
-  
+
   tags = {
     Environment = "Production"
     Project     = "MyApp"
@@ -104,22 +106,22 @@ module "postgres_rds" {
 
   use_aurora = false
   identifier = "my-postgres-rds"
-  
+
   engine         = "postgres"
   engine_version = "14.9"
   instance_class = "db.t3.micro"
-  
+
   database_name   = "myapp"
   master_username = "admin"
   master_password = "secure-password"
-  
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnet_ids
-  
+
   multi_az = false
   storage_encrypted = true
   backup_retention_period = 7
-  
+
   tags = {
     Environment = "Development"
     Project     = "MyApp"
@@ -135,22 +137,22 @@ module "mysql_rds" {
 
   use_aurora = false
   identifier = "my-mysql-rds"
-  
+
   engine         = "mysql"
   engine_version = "8.0.35"
   instance_class = "db.t3.micro"
-  
+
   database_name   = "myapp"
   master_username = "admin"
   master_password = "secure-password"
-  
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnet_ids
-  
+
   multi_az = true
   storage_encrypted = true
   backup_retention_period = 7
-  
+
   tags = {
     Environment = "Production"
     Project     = "MyApp"
@@ -161,12 +163,14 @@ module "mysql_rds" {
 ## Змінні
 
 ### Обов'язкові змінні:
+
 - `identifier` (string, required) - Унікальний ідентифікатор для RDS instance або cluster
 - `master_password` (string, required, sensitive) - Пароль адміністратора
 - `vpc_id` (string, required) - ID VPC для розгортання RDS
 - `subnet_ids` (list(string), required) - Список ID підмереж для DB Subnet Group
 
 ### Основні змінні:
+
 - `use_aurora` (bool, default: `false`) - Використовувати Aurora Cluster (true) або звичайну RDS instance (false)
 - `engine` (string, default: `"postgres"`) - Тип двигуна бази даних:
   - Для Aurora: `"aurora-postgresql"`, `"aurora-mysql"`
@@ -183,13 +187,16 @@ module "mysql_rds" {
 - `master_username` (string, default: `"admin"`) - Ім'я користувача адміністратора
 
 ### Aurora змінні (якщо use_aurora = true):
+
 - `aurora_cluster_size` (number, default: `1`) - Кількість інстансів в Aurora cluster (мінімум 1 для writer)
 - `aurora_instance_class` (string, default: `"db.r6g.large"`) - Клас інстансу для Aurora reader instances
 
 ### RDS змінні (якщо use_aurora = false):
+
 - `multi_az` (bool, default: `false`) - Розгорнути в кількох зонах доступності (висока доступність)
 
 ### Параметри бази даних:
+
 - `max_connections` (number, default: `100`) - Максимальна кількість підключень до бази даних
 - `log_statement` (string, default: `"none"`) - Тип логування SQL запитів:
   - `"none"` - не логувати
@@ -199,16 +206,19 @@ module "mysql_rds" {
 - `work_mem` (number, default: `4`) - Робоча пам'ять для операцій сортування та хешування (в MB)
 
 ### Резервне копіювання:
+
 - `backup_retention_period` (number, default: `7`) - Період зберігання резервних копій (в днях, 0-35)
 - `backup_window` (string, default: `"03:00-04:00"`) - Вікно для створення резервних копій (UTC формат: `"HH:MM-HH:MM"`)
 - `maintenance_window` (string, default: `"sun:04:00-sun:05:00"`) - Вікно для технічного обслуговування (UTC формат: `"ddd:HH:MM-ddd:HH:MM"`)
 
 ### Безпека:
+
 - `storage_encrypted` (bool, default: `true`) - Шифрування зберігання даних
 - `deletion_protection` (bool, default: `false`) - Захист від видалення
 - `vpc_cidr_blocks` (list(string), default: `["10.0.0.0/16"]`) - CIDR блоки VPC для Security Group
 
 ### Теги:
+
 - `tags` (map(string), default: `{}`) - Теги для ресурсів RDS
 
 ## Як змінити тип БД, engine, клас інстансу
@@ -216,15 +226,16 @@ module "mysql_rds" {
 ### Зміна типу БД (Aurora ↔ RDS)
 
 Щоб перейти з RDS на Aurora:
+
 ```hcl
 module "rds" {
   source = "./modules/rds"
-  
+
   use_aurora = true  # Змінити з false на true
-  
+
   # Для Aurora потрібно використовувати aurora- префікс
   engine = "aurora-postgresql"  # або "aurora-mysql"
-  
+
   # Решта параметрів залишаються
   identifier = "my-db"
   # ...
@@ -232,15 +243,16 @@ module "rds" {
 ```
 
 Щоб перейти з Aurora на RDS:
+
 ```hcl
 module "rds" {
   source = "./modules/rds"
-  
+
   use_aurora = false  # Змінити з true на false
-  
+
   # Для RDS прибрати aurora- префікс
   engine = "postgres"  # або "mysql"
-  
+
   # Решта параметрів залишаються
   identifier = "my-db"
   # ...
@@ -254,15 +266,15 @@ module "rds" {
 ```hcl
 module "rds" {
   source = "./modules/rds"
-  
+
   # Для PostgreSQL
   engine = "postgres"  # або "aurora-postgresql" для Aurora
   engine_version = "14.9"
-  
+
   # Або для MySQL
   engine = "mysql"  # або "aurora-mysql" для Aurora
   engine_version = "8.0.35"
-  
+
   # Решта параметрів
   identifier = "my-db"
   # ...
@@ -276,19 +288,19 @@ module "rds" {
 ```hcl
 module "rds" {
   source = "./modules/rds"
-  
+
   # Для RDS
   instance_class = "db.t3.micro"    # Мінімальний
   instance_class = "db.t3.small"    # Маленький
   instance_class = "db.t3.medium"   # Середній
   instance_class = "db.r6g.large"   # Великий з оптимізацією пам'яті
-  
+
   # Для Aurora writer
   instance_class = "db.r6g.large"
-  
+
   # Для Aurora readers (окрема змінна)
   aurora_instance_class = "db.r6g.xlarge"
-  
+
   # Решта параметрів
   identifier = "my-db"
   # ...
@@ -302,10 +314,10 @@ module "rds" {
 ```hcl
 module "rds" {
   source = "./modules/rds"
-  
+
   engine = "postgres"
   engine_version = "14.9"  # Змінити на "15.4" або "16.1"
-  
+
   # Решта параметрів
   identifier = "my-db"
   # ...
@@ -319,10 +331,10 @@ module "rds" {
 ```hcl
 module "rds" {
   source = "./modules/rds"
-  
+
   use_aurora = true
   aurora_cluster_size = 3  # 1 writer + 2 readers
-  
+
   # Решта параметрів
   identifier = "my-db"
   # ...
@@ -334,12 +346,14 @@ module "rds" {
 ## Виводи
 
 ### Спільні виводи:
+
 - `database_name` - Назва бази даних
 - `master_username` - Ім'я користувача адміністратора
 - `engine` - Тип двигуна бази даних
 - `engine_version` - Версія двигуна бази даних
 
 ### Aurora виводи (якщо use_aurora = true):
+
 - `aurora_cluster_id` - ID Aurora Cluster
 - `aurora_cluster_endpoint` - Writer endpoint Aurora Cluster
 - `aurora_cluster_reader_endpoint` - Reader endpoint Aurora Cluster
@@ -348,16 +362,19 @@ module "rds" {
 - `aurora_reader_endpoints` - Endpoints Aurora Reader instances
 
 ### RDS виводи (якщо use_aurora = false):
+
 - `rds_instance_id` - ID RDS Instance
 - `rds_instance_endpoint` - Endpoint RDS Instance
 - `rds_instance_port` - Порт RDS Instance
 
 ### Спільні ресурси:
+
 - `db_subnet_group_name` - Назва DB Subnet Group
 - `security_group_id` - ID Security Group для RDS
 - `parameter_group_name` - Назва Parameter Group
 
 ### Connection string:
+
 - `connection_string` - Рядок підключення до бази даних (sensitive)
 
 ## Використання в main.tf
@@ -370,7 +387,7 @@ module "rds" {
   source = "./modules/rds"
 
   # Обов'язкові параметри
-  identifier     = "lesson-8-db"
+  identifier     = "fn-project-db"
   master_password = "your-secure-password-here"
   vpc_id         = module.vpc.vpc_id
   subnet_ids     = module.vpc.private_subnet_ids
@@ -394,7 +411,7 @@ module "rds" {
 
   tags = {
     Environment = "Production"
-    Project     = "Lesson-8"
+    Project     = "fn-project"
   }
 }
 ```
@@ -407,7 +424,7 @@ module "rds" {
   source = "./modules/rds"
 
   # Обов'язкові параметри
-  identifier     = "lesson-8-aurora"
+  identifier     = "fn-project-aurora"
   master_password = "your-secure-password-here"
   vpc_id         = module.vpc.vpc_id
   subnet_ids     = module.vpc.private_subnet_ids
@@ -434,7 +451,7 @@ module "rds" {
 
   tags = {
     Environment = "Production"
-    Project     = "Lesson-8"
+    Project     = "fn-project"
   }
 }
 ```
@@ -442,6 +459,7 @@ module "rds" {
 ## Приклади
 
 Дивіться папку `examples/` для детальних прикладів використання:
+
 - `aurora-example.tf` - Aurora PostgreSQL Cluster
 - `aurora-mysql-example.tf` - Aurora MySQL Cluster
 - `postgres-example.tf` - PostgreSQL RDS Instance
@@ -450,11 +468,13 @@ module "rds" {
 ## Безпека
 
 Модуль автоматично створює Security Group з правилами для:
+
 - PostgreSQL (порт 5432)
 - MySQL (порт 3306)
 - Вихідний трафік
 
 Рекомендується:
+
 - Використовувати сильні паролі
 - Увімкнути шифрування зберігання
 - Налаштувати резервне копіювання
@@ -465,4 +485,4 @@ module "rds" {
 - Terraform >= 1.0
 - AWS Provider >= 4.0
 - VPC з приватними підмережами
-- Доступ до AWS RDS сервісів 
+- Доступ до AWS RDS сервісів

@@ -174,14 +174,25 @@
 - `templates/` - Kubernetes маніфести
 - `values.yaml` - Конфігурація
 
+### Django Application:
+
+- `django-app/` - Django додаток з Dockerfile та docker-compose.yaml
+- `Dockerfile` - Docker образ для Django
+- `docker-compose.yaml` - Локальне тестування
+
 ### CI/CD:
 
 - `Jenkinsfile` - Jenkins pipeline
 - `jenkins-setup.md` - Інструкції для Jenkins
 - `argocd-setup.md` - Інструкції для Argo CD
 
+### Приклади:
+
+- `examples/` - Приклади використання модулів (Aurora, MySQL, PostgreSQL)
+
 ### Документація:
 
 - `README.md` - Основна документація
+- `FINAL_PROJECT.md` - Інструкції фінального проєкту
 - `quick-start.sh` - Скрипт швидкого старту
 - `IMPLEMENTATION_SUMMARY.md` - Цей файл

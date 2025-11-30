@@ -34,13 +34,13 @@ module "vpc" {
   public_subnets     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   private_subnets    = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
   availability_zones = ["us-west-2a", "us-west-2b", "us-west-2c"]
-  vpc_name           = "lesson-8-vpc"
+  vpc_name           = "fn-project-vpc"
 }
 
 # Підключаємо модуль ECR
 module "ecr" {
   source       = "./modules/ecr"
-  ecr_name     = "lesson-8-ecr"
+  ecr_name     = "fn-project-ecr"
   scan_on_push = true
 }
 
@@ -48,7 +48,7 @@ module "ecr" {
 module "eks" {
   source = "./modules/eks"
 
-  cluster_name    = "lesson-8-eks-cluster"
+  cluster_name    = "fn-project-eks-cluster"
   cluster_version = "1.28"
 
   vpc_id             = module.vpc.vpc_id
@@ -63,7 +63,7 @@ module "eks" {
 
   tags = {
     Environment = "Production"
-    Project     = "Lesson-8"
+    Project     = "fn-project"
   }
 }
 
@@ -96,7 +96,7 @@ module "rds" {
 
   # Основні налаштування
   use_aurora = false # Звичайна RDS instance
-  identifier = "lesson-8-db"
+  identifier = "fn-project-db"
 
   # Двигун бази даних
   engine         = "postgres"
@@ -118,7 +118,7 @@ module "rds" {
 
   tags = {
     Environment = "Production"
-    Project     = "Lesson-8"
+    Project     = "fn-project"
   }
 }
 
@@ -138,7 +138,7 @@ module "argo_cd" {
   app_name                 = "django-app"
   app_namespace            = "django-app"
   git_repo_url             = "https://github.com/your-username/my-microservice-project.git"
-  git_repo_path            = "lesson-8/charts/django-app"
+  git_repo_path            = "charts/django-app"
   git_repo_target_revision = "main"
 
   # ECR repository для образів

@@ -41,7 +41,7 @@ pipeline {
         ECR_REPOSITORY = 'your-ecr-repository-url'
         AWS_REGION = 'us-west-2'
         GIT_REPO = 'https://github.com/your-username/my-microservice-project.git'
-        HELM_CHART_PATH = 'lesson-8/charts/django-app'
+        HELM_CHART_PATH = 'charts/django-app'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
     
@@ -60,8 +60,8 @@ pipeline {
                     script {
                         sh """
                             /kaniko/executor \
-                            --context lesson-8/django-app \
-                            --dockerfile lesson-8/django-app/Dockerfile \
+                            --context django-app \
+                            --dockerfile django-app/Dockerfile \
                             --destination ${ECR_REPOSITORY}:${IMAGE_TAG} \
                             --destination ${ECR_REPOSITORY}:latest \
                             --cache=true
