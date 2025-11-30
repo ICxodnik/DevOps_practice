@@ -1,38 +1,39 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
+!*.tfvars.example
+.terraform.tfstate.lock.info
+
+# AWS credentials
+.aws/
+*.pem
+*.key
+aws-credentials
+.env
+.env.local
+*.env
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual Environment
+env/
 venv/
 ENV/
-env/
 .venv
 
 # Django
 *.log
-local_settings.py
 db.sqlite3
-db.sqlite3-journal
-/media
-/staticfiles
+media/
+staticfiles/
 
 # IDE
 .vscode/
@@ -45,24 +46,14 @@ db.sqlite3-journal
 .DS_Store
 Thumbs.db
 
-# Environment variables
-.env
-.env.local
-
 # Docker
 .dockerignore
 
-# Terraform
-.terraform/
-.terraform.lock.hcl
-*.tfstate
-*.tfstate.*
-.terraform.tfstate.lock.info
-crash.log
-crash.*.log
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-.terraformrc
-terraform.rc
+# Secrets
+secrets/
+*.secret
+credentials.json
+
+# Local testing
+local-test/
+test-output/
