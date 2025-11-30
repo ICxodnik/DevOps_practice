@@ -14,6 +14,24 @@ spec:
       labels:
         {{- include "django-app.selectorLabels" . | nindent 8 }}
     spec:
+      initContainers:
+        - name: migrate
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["python", "manage.py", "migrate", "--noinput"]
+          envFrom:
+            - configMapRef:
+                name: {{ include "django-app.fullname" . }}-config
+        - name: collectstatic
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["python", "manage.py", "collectstatic", "--noinput"]
+          envFrom:
+            - configMapRef:
+                name: {{ include "django-app.fullname" . }}-config
+          volumeMounts:
+            - name: static-files
+              mountPath: /app/staticfiles
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

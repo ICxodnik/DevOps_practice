@@ -11,4 +11,9 @@ data:
   STATIC_URL: {{ .Values.env.STATIC_URL | quote }}
   STATIC_ROOT: {{ .Values.env.STATIC_ROOT | quote }}
   LOG_LEVEL: {{ .Values.env.LOG_LEVEL | quote }}
-  ENVIRONMENT: {{ .Values.env.ENVIRONMENT | quote }} 
+  ENVIRONMENT: {{ .Values.env.ENVIRONMENT | quote }}
+  POSTGRES_DB: {{ .Values.env.POSTGRES_DB | quote }}
+  POSTGRES_USER: {{ .Values.env.POSTGRES_USER | quote }}
+  POSTGRES_PASSWORD: {{ .Values.env.POSTGRES_PASSWORD | quote }}
+  POSTGRES_HOST: {{ .Values.env.POSTGRES_HOST | quote }}
+  POSTGRES_PORT: {{ .Values.env.POSTGRES_PORT | quote }} 

@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Count
+from django.db import connection
 import json
 
 from .models import Country, UserVisit
@@ -209,5 +210,16 @@ def toggle_country_view(request, country_id):
         'percentage': round(percentage, 2),
         'is_authenticated': request.user.is_authenticated
     })
+
+
+def health_check_view(request):
+    """Health check endpoint для Kubernetes liveness та readiness probes"""
+    try:
+        # Перевіряємо підключення до бази даних
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        return HttpResponse("OK", status=200)
+    except Exception as e:
+        return HttpResponse(f"Database connection failed: {str(e)}", status=503)
 
 
