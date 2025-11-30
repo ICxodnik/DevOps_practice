@@ -13,10 +13,10 @@
 
 ## Швидкий старт
 
-### Варіант 1: Docker Compose (рекомендовано)
+### Варіант 1: Docker Compose з Nginx (рекомендовано)
 
 ```bash
-# Запуск з PostgreSQL
+# Запуск з PostgreSQL та Nginx
 docker-compose -f docker-compose.local.yaml up -d
 
 # Створення суперкористувача
@@ -24,9 +24,19 @@ docker-compose -f docker-compose.local.yaml exec django-app python manage.py cre
 
 # Перегляд логів
 docker-compose -f docker-compose.local.yaml logs -f django-app
+docker-compose -f docker-compose.local.yaml logs -f nginx
 ```
 
-Додаток буде доступний на http://localhost:8000
+Додаток буде доступний на:
+
+- **http://localhost** - через Nginx (порт 80)
+- **http://localhost:8000** - напряму до Django (якщо потрібно)
+
+**Архітектура**:
+
+- Nginx (порт 80) → проксує запити до Django
+- Django (порт 8000, внутрішній) → обробляє запити
+- PostgreSQL (порт 5432) → база даних
 
 ### Варіант 2: Локальна розробка
 

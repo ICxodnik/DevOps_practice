@@ -43,27 +43,27 @@
 
 1. **Підготовка середовища**:
 
-   ```bash
+```bash
    git clone https://github.com/icxodnik/DevOps_practice.git
-   cd DevOps_practice
+cd DevOps_practice
    export AWS_ACCESS_KEY_ID="your-access-key"
    export AWS_SECRET_ACCESS_KEY="your-secret-key"
    export AWS_DEFAULT_REGION="us-west-2"
-   ```
+```
 
 2. **Розгортання інфраструктури**:
 
-   ```bash
+```bash
    terraform init
    terraform plan
    terraform apply
-   ```
+```
 
 3. **Налаштування kubectl**:
 
-   ```bash
+```bash
    aws eks update-kubeconfig --name fn-project-eks-cluster --region us-west-2
-   ```
+```
 
 4. **Доступ до сервісів**:
    - Jenkins: `kubectl port-forward svc/jenkins 8080:8080 -n jenkins`
@@ -350,15 +350,18 @@ docker-compose -f docker-compose.local.yaml up -d
 
 Додаток буде доступний за адресою:
 
-- **http://localhost:8000** - Django застосунок
+- **http://localhost** - через Nginx (порт 80) - рекомендовано
+- **http://localhost:8000** - напряму до Django (якщо потрібно)
 - **http://localhost:5432** - PostgreSQL база даних
 
 **Що включає**:
 
+- Nginx як reverse proxy для Django
 - Автоматичне створення бази даних
 - Виконання міграцій
 - Завантаження списку країн
 - Готовий до роботи додаток
+- Обслуговування статичних файлів через Nginx
 
 **Створення суперкористувача**:
 
