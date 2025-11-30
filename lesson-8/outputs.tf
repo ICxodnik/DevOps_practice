@@ -135,4 +135,26 @@ output "security_group_id" {
 output "parameter_group_name" {
   description = "Назва Parameter Group"
   value       = module.rds.parameter_group_name
+}
+
+# Monitoring outputs
+output "grafana_url" {
+  description = "URL для доступу до Grafana"
+  value       = module.monitoring.grafana_url
+}
+
+output "grafana_admin_password" {
+  description = "Пароль адміністратора Grafana"
+  value       = module.monitoring.grafana_admin_password
+  sensitive   = true
+}
+
+output "prometheus_url" {
+  description = "URL для доступу до Prometheus"
+  value       = module.monitoring.prometheus_url
+}
+
+output "monitoring_namespace" {
+  description = "Namespace де встановлено моніторинг"
+  value       = module.monitoring.monitoring_namespace
 } 

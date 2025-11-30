@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  django-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: django-app
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=travel_project.settings
+      - PYTHONUNBUFFERED=1
+      - DJANGO_DEBUG=True
+      - DJANGO_ALLOWED_HOSTS=*
+    volumes:
+      - .:/app
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn --bind 0.0.0.0:8000 --workers 3 travel_project.wsgi:application"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+

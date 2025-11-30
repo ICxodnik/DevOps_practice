@@ -74,13 +74,24 @@ terraform output argocd_admin_password
 echo "🐳 ECR Repository URL:"
 terraform output ecr_repository_url
 
+echo "🔗 Grafana URL:"
+terraform output grafana_url
+
+echo "🔑 Grafana Admin Password:"
+terraform output grafana_admin_password
+
+echo "🔗 Prometheus URL:"
+terraform output prometheus_url
+
 echo "=================================================================="
 echo "🎉 Deployment completed successfully!"
 echo ""
 echo "Next steps:"
-echo "1. Access Jenkins at the URL above"
-echo "2. Access Argo CD at the URL above"
-echo "3. Create a new pipeline job in Jenkins using the Jenkinsfile"
-echo "4. Monitor the Argo CD application for automatic deployment"
+echo "1. Configure kubectl: aws eks update-kubeconfig --name lesson-8-eks-cluster --region us-west-2"
+echo "2. Access Jenkins at the URL above (use port-forward if needed)"
+echo "3. Access Argo CD at the URL above (use port-forward if needed)"
+echo "4. Access Grafana at the URL above (use port-forward if needed)"
+echo "5. Create a new pipeline job in Jenkins using the Jenkinsfile"
+echo "6. Monitor the Argo CD application for automatic deployment"
 echo ""
-echo "For more information, see README.md" 
+echo "For more information, see README.md and FINAL_PROJECT.md" 

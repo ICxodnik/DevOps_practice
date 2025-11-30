@@ -10,8 +10,10 @@
 - **vpc**: Повна мережева інфраструктура з публічними та приватними підмережами
 - **ecr**: Amazon ECR репозиторій для Docker образів
 - **eks**: AWS EKS кластер з node groups
+- **rds**: База даних (RDS або Aurora) з гнучким модулем
 - **jenkins**: Jenkins сервер через Helm з налаштуваннями для роботи в Kubernetes
 - **argo_cd**: Argo CD контролер через Helm з GitOps функціональністю
+- **monitoring**: Prometheus та Grafana для моніторингу інфраструктури та додатків
 
 #### Ключові особливості:
 
@@ -113,11 +115,13 @@
 - Розгортає оновлений додаток в Kubernetes
 - Моніторить стан розгортання
 
-### 4. Моніторинг
+### 4. Моніторинг (Prometheus + Grafana)
 
-- Перевірка статусу в Argo CD UI
-- Моніторинг подів та сервісів
-- Health checks та автомасштабування
+- Збір метрик з Kubernetes кластера та додатків
+- Візуалізація метрик через Grafana дашборди
+- Моніторинг ресурсів (CPU, Memory, Network)
+- Автомасштабування на основі метрик
+- Health checks та алерти
 
 ## Ключові переваги
 
@@ -159,8 +163,10 @@
 - `modules/vpc/` - VPC та підмережі
 - `modules/ecr/` - ECR репозиторій
 - `modules/eks/` - EKS кластер
+- `modules/rds/` - RDS база даних
 - `modules/jenkins/` - Jenkins сервер
 - `modules/argo_cd/` - Argo CD контролер
+- `modules/monitoring/` - Prometheus та Grafana
 
 ### Helm Chart:
 

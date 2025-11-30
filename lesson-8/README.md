@@ -59,8 +59,10 @@ lesson-8/
 │   ├── vpc/                 # VPC та підмережі
 │   ├── ecr/                 # ECR репозиторій
 │   ├── eks/                 # EKS кластер
+│   ├── rds/                 # RDS база даних
 │   ├── jenkins/             # Jenkins сервер
-│   └── argo_cd/             # Argo CD контролер
+│   ├── argo_cd/             # Argo CD контролер
+│   └── monitoring/          # Prometheus + Grafana
 └── charts/                  # Helm charts
     └── django-app/          # Django додаток
         ├── Chart.yaml
@@ -154,6 +156,30 @@ kubectl get pods -n django-app
 
 # Перевірка сервісів
 kubectl get svc -n django-app
+
+# Перевірка моніторингу
+kubectl get pods -n monitoring
+kubectl get svc -n monitoring
+```
+
+### Доступ до сервісів через Port Forwarding
+
+```bash
+# Jenkins
+kubectl port-forward svc/jenkins 8080:8080 -n jenkins
+# Відкрийте http://localhost:8080
+
+# Argo CD
+kubectl port-forward svc/argocd-server 8081:443 -n argocd
+# Відкрийте https://localhost:8081
+
+# Grafana
+kubectl port-forward svc/prometheus-grafana 3000:80 -n monitoring
+# Відкрийте http://localhost:3000
+
+# Prometheus
+kubectl port-forward svc/prometheus-operated 9090:9090 -n monitoring
+# Відкрийте http://localhost:9090
 ```
 
 ## Налаштування
@@ -226,4 +252,14 @@ kubectl logs -n jenkins -l app.kubernetes.io/name=jenkins
 
 # Перегляд логів Argo CD
 kubectl logs -n argocd -l app.kubernetes.io/name=argocd-server
+
+# Перегляд логів Prometheus
+kubectl logs -n monitoring -l app.kubernetes.io/name=prometheus
+
+# Перегляд логів Grafana
+kubectl logs -n monitoring -l app.kubernetes.io/name=grafana
+
+# Перевірка метрик Prometheus
+kubectl port-forward svc/prometheus-operated 9090:9090 -n monitoring
+# Відкрийте http://localhost:9090 для перегляду метрик
 ```

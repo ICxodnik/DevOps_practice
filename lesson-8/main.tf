@@ -144,3 +144,15 @@ module "argo_cd" {
   # ECR repository для образів
   ecr_repository_url = module.ecr.repository_url
 }
+
+# Підключаємо модуль Monitoring (Prometheus + Grafana)
+module "monitoring" {
+  source = "./modules/monitoring"
+
+  # EKS cluster змінні
+  cluster_name                       = module.eks.cluster_name
+  cluster_endpoint                   = module.eks.cluster_endpoint
+  cluster_certificate_authority_data = module.eks.cluster_certificate_authority_data
+
+  monitoring_namespace = "monitoring"
+}
