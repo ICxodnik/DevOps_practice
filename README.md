@@ -1,144 +1,80 @@
-# Туристичний трекер
+# Фінальний проєкт: DevOps Infrastructure на AWS
 
-Docker-проєкт з Django, PostgreSQL та Nginx для відстеження відвіданих країн.
+Повна автоматизація DevOps інфраструктури на AWS з використанням Terraform, включаючи Kubernetes кластер (EKS), CI/CD з Jenkins та Argo CD, базу даних RDS/Aurora, контейнерний реєстр ECR та моніторинг з Prometheus та Grafana.
 
 ## Опис проєкту
 
-Туристичний трекер - це веб-застосунок, який дозволяє користувачам:
+Цей проєкт демонструє повну автоматизацію DevOps інфраструктури на AWS для розгортання Django додатку з повним CI/CD циклом та моніторингом.
 
-- Реєструватися та входити в систему
-- Відмічати країни, які вони відвідали
-- Переглядати інтерактивну карту з відміченими країнами
-- Бачити статистику відвіданих країн та відсоток відвіданих країн
+### Основні компоненти:
 
-## Технології
+- **Infrastructure as Code**: Terraform модулі для всіх компонентів
+- **Kubernetes**: EKS кластер з автоматичним масштабуванням
+- **CI/CD**: Jenkins для збірки та Argo CD для GitOps розгортання
+- **База даних**: Гнучкий модуль RDS (PostgreSQL/MySQL або Aurora)
+- **Моніторинг**: Prometheus та Grafana для відстеження метрик
+- **Django Application**: Туристичний трекер для відстеження відвіданих країн
+
+## Туристичний трекер - Django додаток
+
+**Туристичний трекер** - це веб-застосунок на Django, який дозволяє користувачам відстежувати країни, які вони відвідали. Додаток надає зручний інтерфейс для управління особистим списком відвіданих країн та візуалізацію на інтерактивній карті.
+
+### Функціонал:
+
+- **Реєстрація та авторизація**: Користувачі можуть створювати облікові записи та входити в систему
+- **Відмітка країн**: Простий клік на країну на інтерактивній карті (Leaflet) дозволяє відмітити її як відвідану
+- **Статистика**: Автоматичний підрахунок кількості відвіданих країн та відсотку від загальної кількості
+- **Список країн**: Перегляд всіх країн світу з можливістю фільтрації та пошуку
+- **Персональний профіль**: Кожен користувач має свій власний список відвіданих країн
+
+### Технології додатку:
 
 - **Django 4.2** - веб-фреймворк
-- **PostgreSQL 15** - база даних
-- **Nginx** - веб-сервер для проксирування запитів
-- **Docker & Docker Compose** - контейнеризація
-- **Leaflet** - інтерактивна карта
-- **Gunicorn** - WSGI сервер
+- **PostgreSQL** - база даних для зберігання країн та відвідувань
+- **Leaflet** - інтерактивна карта світу
+- **Gunicorn** - WSGI сервер для production
+- **WhiteNoise** - обслуговування статичних файлів
 
-## Структура проєкту
+## Швидкий старт
 
-```
-DevOps_practice/
-├── travel_project/          # Основний Django проєкт
-│   ├── settings.py          # Налаштування проєкту
-│   ├── urls.py              # URL конфігурація
-│   └── wsgi.py              # WSGI конфігурація
-├── travel_tracker/          # Django додаток
-│   ├── models.py            # Моделі даних (Country, UserVisit)
-│   ├── views.py             # Views для обробки запитів
-│   ├── urls.py              # URL маршрути додатку
-│   ├── templates/           # HTML шаблони
-│   └── management/commands/ # Management команди
-├── nginx/
-│   └── nginx.conf           # Конфігурація Nginx
-├── Dockerfile               # Dockerfile для Django
-├── docker-compose.yml       # Docker Compose конфігурація
-├── requirements.txt         # Python залежності
-└── README.md                # Документація
-```
+Детальні інструкції з розгортання дивіться в [FINAL_PROJECT.md](FINAL_PROJECT.md)
 
-## Встановлення та запуск
+### Основні кроки:
 
-### Вимоги
+1. **Підготовка середовища**:
 
-- Docker
-- Docker Compose
+   ```bash
+   git clone https://github.com/icxodnik/DevOps_practice.git
+   cd DevOps_practice
+   export AWS_ACCESS_KEY_ID="your-access-key"
+   export AWS_SECRET_ACCESS_KEY="your-secret-key"
+   export AWS_DEFAULT_REGION="us-west-2"
+   ```
 
-### Кроки запуску
+2. **Розгортання інфраструктури**:
 
-1. Клонуйте репозиторій:
+   ```bash
+   terraform init
+   terraform plan
+   terraform apply
+   ```
 
-```bash
-git clone <your-repo-url>
-cd DevOps_practice
-```
+3. **Налаштування kubectl**:
 
-2. Запустіть проєкт за допомогою Docker Compose:
+   ```bash
+   aws eks update-kubeconfig --name fn-project-eks-cluster --region us-west-2
+   ```
+
+4. **Доступ до сервісів**:
+   - Jenkins: `kubectl port-forward svc/jenkins 8080:8080 -n jenkins`
+   - Argo CD: `kubectl port-forward svc/argocd-server 8081:443 -n argocd`
+   - Grafana: `kubectl port-forward svc/prometheus-grafana 3000:80 -n monitoring`
+
+Або використайте скрипт швидкого старту:
 
 ```bash
-docker-compose up -d
+./quick-start.sh
 ```
-
-3. Проєкт буде доступний за адресою:
-
-   - **http://localhost** - через Nginx
-   - **http://localhost:8000** - напряму до Django
-
-4. Створіть суперкористувача для доступу до адмін-панелі (опціонально):
-
-```bash
-docker-compose exec web python manage.py createsuperuser
-```
-
-5. Адмін-панель доступна за адресою:
-   - **http://localhost/admin**
-
-## Використання
-
-1. **Реєстрація**: Створіть новий акаунт на сторінці реєстрації
-2. **Вхід**: Увійдіть у систему зі своїми обліковими даними
-3. **Відмітка країн**: Клікніть на країну на карті, щоб відмітити її як відвідану
-4. **Статистика**: Переглядайте кількість відвіданих країн та відсоток на головній сторінці
-
-## Docker сервіси
-
-- **web** - Django застосунок (порт 8000)
-- **db** - PostgreSQL база даних (порт 5432)
-- **nginx** - Nginx веб-сервер (порт 80)
-
-## Management команди
-
-Завантаження країн у базу даних:
-
-```bash
-docker-compose exec web python manage.py load_countries
-```
-
-## Зупинка проєкту
-
-```bash
-docker-compose down
-```
-
-Для видалення всіх даних (включаючи базу даних):
-
-```bash
-docker-compose down -v
-```
-
-## Розробка
-
-Для локальної розробки без Docker:
-
-1. Встановіть залежності:
-
-```bash
-pip install -r requirements.txt
-```
-
-2. Налаштуйте базу даних PostgreSQL
-
-3. Виконайте міграції:
-
-```bash
-python manage.py migrate
-python manage.py load_countries
-```
-
-4. Запустіть сервер розробки:
-
-```bash
-python manage.py runserver
-```
-
-# Lesson 8: Jenkins + Helm + Terraform + Argo CD CI/CD Pipeline
-
-Цей проект демонструє повний CI/CD процес з використанням Jenkins, Helm, Terraform та Argo CD для автоматичного розгортання Django додатку в AWS EKS кластері.
 
 ## Архітектура
 
@@ -168,8 +104,10 @@ python manage.py runserver
 - **VPC**: Мережева інфраструктура
 - **ECR**: Docker registry для образів
 - **EKS**: Kubernetes кластер
+- **RDS**: База даних (PostgreSQL або Aurora)
 - **Jenkins**: CI/CD сервер
 - **Argo CD**: GitOps контролер
+- **Prometheus + Grafana**: Моніторинг інфраструктури та додатків
 
 ### 2. CI/CD Pipeline (Jenkins)
 
@@ -187,12 +125,13 @@ python manage.py runserver
 ## Структура проекту
 
 ```
-fn-project/
+DevOps_practice/
 ├── main.tf                  # Головний файл Terraform
-├── backend.tf               # Налаштування S3 backend
-├── outputs.tf               # Виводи ресурсів
-├── Jenkinsfile              # CI/CD pipeline
-├── modules/                 # Terraform модулі
+├── backend.tf                # Налаштування S3 backend
+├── outputs.tf                # Виводи ресурсів
+├── Jenkinsfile               # CI/CD pipeline
+│
+├── modules/                  # Terraform модулі
 │   ├── s3-backend/          # S3 та DynamoDB
 │   ├── vpc/                 # VPC та підмережі
 │   ├── ecr/                 # ECR репозиторій
@@ -201,16 +140,36 @@ fn-project/
 │   ├── jenkins/             # Jenkins сервер
 │   ├── argo_cd/             # Argo CD контролер
 │   └── monitoring/          # Prometheus + Grafana
-└── charts/                  # Helm charts
-    └── django-app/          # Django додаток
-        ├── Chart.yaml
-        ├── values.yaml
-        └── templates/
-            ├── deployment.yaml
-            ├── service.yaml
-            ├── configmap.yaml
-            ├── hpa.yaml
-            └── _helpers.tpl
+│
+├── charts/                   # Helm charts
+│   └── django-app/          # Django додаток
+│       ├── Chart.yaml
+│       ├── values.yaml
+│       └── templates/
+│           ├── deployment.yaml
+│           ├── service.yaml
+│           ├── configmap.yaml
+│           ├── hpa.yaml
+│           └── _helpers.tpl
+│
+├── django-app/              # Django додаток
+│   ├── Dockerfile
+│   ├── docker-compose.yaml
+│   ├── Jenkinsfile
+│   └── travel_project/      # Django проєкт
+│
+├── examples/                # Приклади використання модулів
+│   ├── aurora-example.tf
+│   ├── aurora-mysql-example.tf
+│   ├── mysql-example.tf
+│   └── postgres-example.tf
+│
+└── Документація:
+    ├── README.md            # Основна документація
+    ├── FINAL_PROJECT.md     # Інструкції фінального проєкту
+    ├── IMPLEMENTATION_SUMMARY.md
+    ├── jenkins-setup.md
+    └── argocd-setup.md
 ```
 
 ## Встановлення
@@ -219,8 +178,8 @@ fn-project/
 
 ```bash
 # Клонування репозиторію
-git clone https://github.com/your-username/my-microservice-project.git
-cd my-microservice-project/fn-project
+git clone https://github.com/icxodnik/DevOps_practice.git
+cd DevOps_practice
 
 # Налаштування AWS credentials
 export AWS_ACCESS_KEY_ID="your-access-key"
@@ -376,6 +335,147 @@ terraform destroy
 - Перегляньте логи подів для діагностики
 - Перевірте ресурси кластера (CPU/Memory)
 
+## Розгортання додатку
+
+Додаток можна розгорнути в різних середовищах:
+
+### 1. Локальне розгортання (Docker Compose)
+
+Найпростіший спосіб запустити додаток локально з PostgreSQL:
+
+```bash
+cd django-app
+docker-compose -f docker-compose.local.yaml up -d
+```
+
+Додаток буде доступний за адресою:
+
+- **http://localhost:8000** - Django застосунок
+- **http://localhost:5432** - PostgreSQL база даних
+
+**Що включає**:
+
+- Автоматичне створення бази даних
+- Виконання міграцій
+- Завантаження списку країн
+- Готовий до роботи додаток
+
+**Створення суперкористувача**:
+
+```bash
+docker-compose -f docker-compose.local.yaml exec django-app python manage.py createsuperuser
+```
+
+**Зупинка**:
+
+```bash
+docker-compose -f docker-compose.local.yaml down
+# Для видалення даних БД:
+docker-compose -f docker-compose.local.yaml down -v
+```
+
+### 2. Локальне розгортання без Docker
+
+Для розробки без Docker:
+
+```bash
+cd django-app
+
+# Встановлення залежностей
+pip install -r requirements.txt
+
+# Налаштування бази даних (створіть PostgreSQL базу)
+# Оновіть settings.py з параметрами підключення до БД
+
+# Виконання міграцій
+python manage.py migrate
+
+# Завантаження країн
+python manage.py load_countries
+
+# Створення суперкористувача
+python manage.py createsuperuser
+
+# Запуск сервера розробки
+python manage.py runserver
+```
+
+### 3. Розгортання в AWS (Production)
+
+Повна інструкція в [FINAL_PROJECT.md](FINAL_PROJECT.md):
+
+```bash
+# Розгортання інфраструктури
+terraform init
+terraform plan
+terraform apply
+
+# Налаштування kubectl
+aws eks update-kubeconfig --name fn-project-eks-cluster --region us-west-2
+
+# Додаток автоматично розгортається через Argo CD
+```
+
+### 4. Розгортання в іншому Kubernetes кластері
+
+Якщо у вас є інший Kubernetes кластер (не AWS EKS):
+
+1. **Створіть Docker образ**:
+
+   ```bash
+   cd django-app
+   docker build -t your-registry/travel-tracker:latest .
+   docker push your-registry/travel-tracker:latest
+   ```
+
+2. **Оновіть Helm chart** (`charts/django-app/values.yaml`):
+
+   ```yaml
+   image:
+     repository: your-registry/travel-tracker
+     tag: latest
+   ```
+
+3. **Розгорніть через Helm**:
+   ```bash
+   helm install travel-tracker ./charts/django-app -n django-app --create-namespace
+   ```
+
+### Management команди
+
+```bash
+# Завантаження країн у базу даних
+python manage.py load_countries
+
+# Створення суперкористувача
+python manage.py createsuperuser
+
+# Виконання міграцій
+python manage.py migrate
+
+# Збір статичних файлів
+python manage.py collectstatic
+```
+
+### Налаштування бази даних
+
+Для локального розгортання без Docker створіть файл `.env` в `django-app/`:
+
+```env
+POSTGRES_DB=travel_tracker
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_password
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+SECRET_KEY=your-secret-key
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+```
+
+Або використайте `env.example` як шаблон.
+
+**Примітка**: Для Docker Compose використовуйте `docker-compose.local.yaml`, який автоматично налаштовує базу даних.
+
 ## Корисні команди
 
 ```bash
@@ -401,3 +501,12 @@ kubectl logs -n monitoring -l app.kubernetes.io/name=grafana
 kubectl port-forward svc/prometheus-operated 9090:9090 -n monitoring
 # Відкрийте http://localhost:9090 для перегляду метрик
 ```
+
+## Додаткова документація
+
+- [FINAL_PROJECT.md](FINAL_PROJECT.md) - Детальні інструкції фінального проєкту
+- [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) - Опис реалізації
+- [jenkins-setup.md](jenkins-setup.md) - Налаштування Jenkins
+- [argocd-setup.md](argocd-setup.md) - Налаштування Argo CD
+- [modules/rds/README.md](modules/rds/README.md) - Документація модуля RDS
+- [django-app/README.md](django-app/README.md) - Документація Django додатку "Туристичний трекер"
