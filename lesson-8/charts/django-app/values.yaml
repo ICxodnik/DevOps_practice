@@ -1,0 +1,99 @@
+# Default values for django-app
+replicaCount: 2
+
+image:
+  repository: your-ecr-repository-url
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets:
+  - name: aws-ecr-secret
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Django specific settings
+django:
+  debug: "False"
+  allowedHosts: "*"
+  secretKey: "your-secret-key-here"
+  database:
+    engine: "django.db.backends.sqlite3"
+    name: "db.sqlite3"
+  
+  # Environment variables
+  env:
+    - name: DJANGO_SETTINGS_MODULE
+      value: "myproject.settings"
+    - name: PYTHONUNBUFFERED
+      value: "1"
+    - name: DJANGO_DEBUG
+      value: "False"
+    - name: DJANGO_ALLOWED_HOSTS
+      value: "*"
+
+# ConfigMap for Django settings
+configMap:
+  enabled: true
+  data:
+    django_settings.py: |
+      import os
+      
+      DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
+      ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
+      SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-secret-key-here')
+      
+      DATABASES = {
+          'default': {
+              'ENGINE': os.getenv('DATABASE_ENGINE', 'django.db.backends.sqlite3'),
+              'NAME': os.getenv('DATABASE_NAME', 'db.sqlite3'),
+          }
+      } 

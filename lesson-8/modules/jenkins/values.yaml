@@ -1,0 +1,78 @@
+controller:
+  serviceType: LoadBalancer
+  adminUser: admin
+  adminPassword: admin123
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+  
+  # Налаштування для Kubernetes Agent
+  jenkinsUrl: http://jenkins:8080
+  jenkinsTunnel: jenkins:50000
+  
+  # Налаштування для роботи з Docker
+  installPlugins:
+    - kubernetes:1.31.3
+    - workflow-aggregator:2.6
+    - git:4.11.0
+    - configuration-as-code:1.55
+    - docker-workflow:1.28
+    - aws-credentials:1.0.15
+    - ecr:1.7
+    - pipeline-utility-steps:2.13.0
+    - credentials-binding:1.27
+    - git-parameter:0.9.18
+  
+  # Налаштування Kubernetes Agent
+  agent:
+    enabled: true
+    resources:
+      requests:
+        cpu: 500m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+
+  # Налаштування для роботи з AWS
+  additionalEnvVars:
+    - name: AWS_DEFAULT_REGION
+      value: us-west-2
+    - name: AWS_REGION
+      value: us-west-2
+
+  # Налаштування для роботи з Git
+  additionalSecrets:
+    - name: git-credentials
+      secretName: git-credentials
+      secretKey: username
+      envVar: GIT_USERNAME
+    - name: git-password
+      secretName: git-credentials
+      secretKey: password
+      envVar: GIT_PASSWORD
+
+  # Налаштування для роботи з ECR
+  additionalSecrets:
+    - name: aws-credentials
+      secretName: aws-credentials
+      secretKey: access-key-id
+      envVar: AWS_ACCESS_KEY_ID
+    - name: aws-secret-key
+      secretName: aws-credentials
+      secretKey: secret-access-key
+      envVar: AWS_SECRET_ACCESS_KEY
+
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClass: gp2
+
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/jenkins-role 

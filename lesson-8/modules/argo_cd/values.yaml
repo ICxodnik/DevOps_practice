@@ -1,0 +1,66 @@
+server:
+  serviceType: LoadBalancer
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+  
+  # Налаштування для роботи з Git
+  extraArgs:
+    - --insecure
+    - --rootpath
+    - /
+  
+  # Налаштування для роботи з Helm
+  config:
+    repositories: |
+      - name: my-repo
+        url: https://github.com/your-username/my-microservice-project.git
+        type: git
+
+repoServer:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+applicationSet:
+  enabled: true
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+redis:
+  enabled: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+# Налаштування для роботи з AWS
+global:
+  image:
+    repository: quay.io/argoproj/argocd
+    tag: v2.8.4
+  
+  # Налаштування для роботи з ECR
+  imagePullSecrets:
+    - name: aws-ecr-secret
+
+# Налаштування для роботи з Helm
+helm:
+  enabled: true
+  version: v3.12.0 
