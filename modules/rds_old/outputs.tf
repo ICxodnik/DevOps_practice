@@ -115,7 +115,7 @@ output "connection_string" {
   description = "Рядок підключення до бази даних"
   value = var.use_aurora ? (
     "postgresql://${var.master_username}:${var.master_password}@${aws_rds_cluster.aurora[0].endpoint}:${aws_rds_cluster.aurora[0].port}/${var.database_name}"
-  ) : (
+    ) : (
     "postgresql://${var.master_username}:${var.master_password}@${aws_db_instance.rds[0].endpoint}:${aws_db_instance.rds[0].port}/${var.database_name}"
   )
   sensitive = true

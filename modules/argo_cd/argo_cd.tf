@@ -66,7 +66,7 @@ resource "kubernetes_manifest" "argocd_application" {
       source = {
         repoURL        = var.git_repo_url
         targetRevision = var.git_repo_target_revision
-        path          = var.git_repo_path
+        path           = var.git_repo_path
       }
       destination = {
         server    = "https://kubernetes.default.svc"

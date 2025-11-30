@@ -24,10 +24,10 @@ resource "aws_ecr_lifecycle_policy" "main" {
         rulePriority = 1
         description  = "Видалення образів старше 30 днів"
         selection = {
-          tagStatus     = "untagged"
-          countType     = "sinceImagePushed"
-          countUnit     = "days"
-          countNumber   = 30
+          tagStatus   = "untagged"
+          countType   = "sinceImagePushed"
+          countUnit   = "days"
+          countNumber = 30
         }
         action = {
           type = "expire"
@@ -37,10 +37,10 @@ resource "aws_ecr_lifecycle_policy" "main" {
         rulePriority = 2
         description  = "Збереження останніх 5 образів"
         selection = {
-          tagStatus   = "tagged"
+          tagStatus     = "tagged"
           tagPrefixList = ["v"]
-          countType   = "imageCountMoreThan"
-          countNumber = 5
+          countType     = "imageCountMoreThan"
+          countNumber   = 5
         }
         action = {
           type = "expire"

@@ -49,7 +49,7 @@ resource "aws_security_group" "rds" {
 resource "aws_db_parameter_group" "rds" {
   family = var.use_aurora ? (
     var.engine == "aurora-postgresql" ? "aurora-postgresql14" : "aurora-mysql8.0"
-  ) : (
+    ) : (
     var.engine == "postgres" ? "postgres14" : "mysql8.0"
   )
   name = "${var.identifier}-parameter-group"
@@ -78,21 +78,21 @@ resource "aws_db_parameter_group" "rds" {
 resource "aws_rds_cluster" "aurora" {
   count = var.use_aurora ? 1 : 0
 
-  cluster_identifier     = var.identifier
-  engine                = var.engine
-  engine_version        = var.engine_version
-  database_name         = var.database_name
-  master_username       = var.master_username
-  master_password       = var.master_password
-  db_subnet_group_name  = aws_db_subnet_group.rds.name
-  vpc_security_group_ids = [aws_security_group.rds.id]
+  cluster_identifier              = var.identifier
+  engine                          = var.engine
+  engine_version                  = var.engine_version
+  database_name                   = var.database_name
+  master_username                 = var.master_username
+  master_password                 = var.master_password
+  db_subnet_group_name            = aws_db_subnet_group.rds.name
+  vpc_security_group_ids          = [aws_security_group.rds.id]
   db_cluster_parameter_group_name = aws_db_parameter_group.rds.name
 
-  backup_retention_period = var.backup_retention_period
-  preferred_backup_window = var.backup_window
+  backup_retention_period      = var.backup_retention_period
+  preferred_backup_window      = var.backup_window
   preferred_maintenance_window = var.maintenance_window
-  storage_encrypted      = var.storage_encrypted
-  deletion_protection    = var.deletion_protection
+  storage_encrypted            = var.storage_encrypted
+  deletion_protection          = var.deletion_protection
 
   skip_final_snapshot = true
 
@@ -139,8 +139,8 @@ resource "aws_rds_cluster_instance" "aurora_readers" {
 resource "aws_db_instance" "rds" {
   count = var.use_aurora ? 0 : 1
 
-  identifier = var.identifier
-  engine     = var.engine
+  identifier     = var.identifier
+  engine         = var.engine
   engine_version = var.engine_version
   instance_class = var.instance_class
 
@@ -152,12 +152,12 @@ resource "aws_db_instance" "rds" {
   vpc_security_group_ids = [aws_security_group.rds.id]
   parameter_group_name   = aws_db_parameter_group.rds.name
 
-  multi_az               = var.multi_az
+  multi_az                = var.multi_az
   backup_retention_period = var.backup_retention_period
-  backup_window          = var.backup_window
-  maintenance_window     = var.maintenance_window
-  storage_encrypted      = var.storage_encrypted
-  deletion_protection    = var.deletion_protection
+  backup_window           = var.backup_window
+  maintenance_window      = var.maintenance_window
+  storage_encrypted       = var.storage_encrypted
+  deletion_protection     = var.deletion_protection
 
   skip_final_snapshot = true
 

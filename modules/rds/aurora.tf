@@ -57,4 +57,4 @@ resource "aws_rds_cluster_instance" "aurora_readers" {
   tags = merge(var.tags, {
     Name = "${var.identifier}-reader-${count.index + 1}"
   })
-} 
+}
