@@ -39,6 +39,8 @@
 
 Детальні інструкції з розгортання дивіться в [FINAL_PROJECT.md](FINAL_PROJECT.md)
 
+**Важливо**: AWS credentials НЕ потраплять в Git завдяки `.gitignore`. Використовуйте environment variables або `~/.aws/credentials`.
+
 ### Основні кроки:
 
 1. **Підготовка середовища**:

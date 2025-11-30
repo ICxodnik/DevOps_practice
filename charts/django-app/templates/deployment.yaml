@@ -51,6 +51,11 @@ spec:
             periodSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.configMap.enabled }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "django-app.fullname" . }}-config
+          {{- end }}
           env:
             {{- range .Values.django.env }}
             - name: {{ .name }}
