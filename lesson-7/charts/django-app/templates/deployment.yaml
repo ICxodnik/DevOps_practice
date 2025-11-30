@@ -39,9 +39,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "django-app.fullname" . }}-config
-          env:
-            - name: SECRET_KEY
-              value: {{ .Values.env.SECRET_KEY | quote }}
           volumeMounts:
             - name: static-files
               mountPath: /app/staticfiles

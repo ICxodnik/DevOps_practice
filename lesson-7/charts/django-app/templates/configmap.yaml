@@ -6,6 +6,7 @@ metadata:
     {{- include "django-app.labels" . | nindent 4 }}
 data:
   DEBUG: {{ .Values.env.DEBUG | quote }}
+  SECRET_KEY: {{ .Values.env.SECRET_KEY | quote }}
   ALLOWED_HOSTS: {{ .Values.env.ALLOWED_HOSTS | quote }}
   STATIC_URL: {{ .Values.env.STATIC_URL | quote }}
   STATIC_ROOT: {{ .Values.env.STATIC_ROOT | quote }}

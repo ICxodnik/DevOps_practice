@@ -4,7 +4,7 @@ global:
 
 # Налаштування образу
 image:
-  repository: "{{ .Values.global.awsAccountId }}.dkr.ecr.{{ .Values.global.awsRegion }}.amazonaws.com/lesson-7-ecr"
+  repository: "{{ .Values.aws.accountId }}.dkr.ecr.{{ .Values.aws.region }}.amazonaws.com/lesson-7-ecr"
   tag: "latest"
   pullPolicy: IfNotPresent
 

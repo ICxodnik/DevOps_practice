@@ -7,7 +7,7 @@ resource "aws_vpc" "main" {
   tags = {
     Name        = var.vpc_name
     Environment = "Production"
-    Project     = "Lesson-5"
+    Project     = "Lesson-7"
   }
 }
 
@@ -23,7 +23,7 @@ resource "aws_subnet" "public" {
   tags = {
     Name        = "${var.vpc_name}-public-${count.index + 1}"
     Environment = "Production"
-    Project     = "Lesson-5"
+    Project     = "Lesson-7"
     Type        = "Public"
   }
 }
@@ -38,7 +38,7 @@ resource "aws_subnet" "private" {
   tags = {
     Name        = "${var.vpc_name}-private-${count.index + 1}"
     Environment = "Production"
-    Project     = "Lesson-5"
+    Project     = "Lesson-7"
     Type        = "Private"
   }
 }
@@ -50,7 +50,7 @@ resource "aws_internet_gateway" "main" {
   tags = {
     Name        = "${var.vpc_name}-igw"
     Environment = "Production"
-    Project     = "Lesson-5"
+    Project     = "Lesson-7"
   }
 }
 
@@ -61,7 +61,7 @@ resource "aws_eip" "nat" {
   tags = {
     Name        = "${var.vpc_name}-nat-eip"
     Environment = "Production"
-    Project     = "Lesson-5"
+    Project     = "Lesson-7"
   }
 }
 
@@ -73,7 +73,7 @@ resource "aws_nat_gateway" "main" {
   tags = {
     Name        = "${var.vpc_name}-nat"
     Environment = "Production"
-    Project     = "Lesson-5"
+    Project     = "Lesson-7"
   }
 
   depends_on = [aws_internet_gateway.main]
