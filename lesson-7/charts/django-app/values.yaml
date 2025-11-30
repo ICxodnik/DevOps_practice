@@ -1,0 +1,64 @@
+# Глобальні налаштування
+global:
+  environment: production
+
+# Налаштування образу
+image:
+  repository: "{{ .Values.global.awsAccountId }}.dkr.ecr.{{ .Values.global.awsRegion }}.amazonaws.com/lesson-7-ecr"
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+# Налаштування застосунку
+app:
+  name: django-app
+  port: 8000
+  replicas: 2
+
+# Налаштування сервісу
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+
+# Налаштування HPA (Horizontal Pod Autoscaler)
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 70
+
+# Налаштування ресурсів
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+# Налаштування змінних середовища
+env:
+  DEBUG: "False"
+  SECRET_KEY: "your-secret-key-here-change-in-production"
+  ALLOWED_HOSTS: "*"
+  STATIC_URL: "/static/"
+  STATIC_ROOT: "/app/staticfiles/"
+  LOG_LEVEL: "INFO"
+  ENVIRONMENT: "production"
+
+# Налаштування AWS
+aws:
+  accountId: "123456789012"  # Замініть на ваш AWS Account ID
+  region: "us-west-2"
+
+# Налаштування інгресу (опціонально)
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: django-app.local
+      paths:
+        - path: /
+          pathType: Prefix 

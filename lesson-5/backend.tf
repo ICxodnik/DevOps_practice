@@ -8,7 +8,7 @@ terraform {
 # S3 backend (розкоментуйте після створення S3 бакета та закоментуйте локальний)
 # terraform {
 #   backend "s3" {
-#     bucket         = "andrii-stanislav-terraform-backend"
+#     bucket         = "nataliia-khodorova-terraform-backend"
 #     key            = "lesson-5/terraform.tfstate"
 #     region         = "us-west-2"
 #     dynamodb_table = "terraform-locks"

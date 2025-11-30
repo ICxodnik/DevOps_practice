@@ -1,0 +1,16 @@
+apiVersion: v2
+name: django-app
+description: Django застосунок для розгортання на Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - django
+  - python
+  - web
+home: https://github.com/your-repo/django-app
+sources:
+  - https://github.com/your-repo/django-app
+maintainers:
+  - name: Your Name
+    email: your.email@example.com 
